@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Berita dan Kegiatan Program KKN Organik Pandanrejo - Aquaponik & Hidroponik">
+  <meta name="keywords" content="berita, kegiatan, KKN, organik, pandanrejo, aquaponik, hidroponik">
+  <title>Berita & Kegiatan - Organik Pandanrejo</title>
+
+  <!-- Favicon -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌿</text></svg>">
+
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="css/style.css">
+
+  <style>
+    /* ===== NEWS ARTICLE LAYOUT ===== */
+    .news-list {
+      display: flex;
+      flex-direction: column;
+      gap: 3rem;
+      margin-top: 2.5rem;
+    }
+
+    .news-article {
+      background: white;
+      border-radius: 1.25rem;
+      overflow: hidden;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.10);
+      border: 1px solid var(--color-border, #e5e7eb);
+      transition: box-shadow 0.3s;
+    }
+
+    .news-article:hover {
+      box-shadow: 0 8px 40px rgba(0,0,0,0.16);
+    }
+
+    /* ===== SLIDESHOW ===== */
+    .news-slideshow {
+      position: relative;
+      width: 100%;
+      height: 380px;
+      overflow: hidden;
+      background: #1a2a1a;
+    }
+
+    .slide {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      transition: opacity 1s ease-in-out;
+    }
+
+    .slide.active {
+      opacity: 1;
+    }
+
+    .slide img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      /* Ken Burns slow zoom */
+      animation: kenburns 8s ease-in-out infinite alternate;
+      transform-origin: center center;
+    }
+
+    @keyframes kenburns {
+      0%   { transform: scale(1)    translate(0, 0); }
+      25%  { transform: scale(1.06) translate(-1%, 0.5%); }
+      50%  { transform: scale(1.10) translate(1%, -1%); }
+      75%  { transform: scale(1.06) translate(-0.5%, 1%); }
+      100% { transform: scale(1)    translate(0, 0); }
+    }
+
+    /* Pause Ken Burns on non-active slides */
+    .slide:not(.active) img {
+      animation-play-state: paused;
+    }
+
+    /* Slideshow dots */
+    .slideshow-dots {
+      position: absolute;
+      bottom: 12px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 7px;
+      z-index: 5;
+    }
+
+    .dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.5);
+      border: none;
+      cursor: pointer;
+      padding: 0;
+      transition: background 0.3s, transform 0.3s;
+    }
+
+    .dot.active {
+      background: white;
+      transform: scale(1.3);
+    }
+
+    /* Slideshow arrows */
+    .slide-arrow {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(0,0,0,0.35);
+      color: white;
+      border: none;
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      font-size: 1.1rem;
+      cursor: pointer;
+      z-index: 5;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s;
+    }
+
+    .slide-arrow:hover { background: rgba(0,0,0,0.6); }
+    .slide-arrow.prev { left: 12px; }
+    .slide-arrow.next { right: 12px; }
+
+    /* ===== ARTICLE CONTENT ===== */
+    .news-body {
+      padding: 1.75rem 2rem 1.5rem;
+    }
+
+    .news-meta {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 0.75rem;
+      flex-wrap: wrap;
+    }
+
+    .news-pekan {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      background: var(--color-primary-light, #d1fae5);
+      color: var(--color-primary, #059669);
+      padding: 0.3rem 0.85rem;
+      border-radius: 2rem;
+      font-size: 0.82rem;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+    }
+
+    .news-number {
+      display: inline-flex;
+      align-items: center;
+      background: #f0fdf4;
+      color: #166534;
+      border: 1px solid #bbf7d0;
+      padding: 0.3rem 0.85rem;
+      border-radius: 2rem;
+      font-size: 0.82rem;
+      font-weight: 700;
+    }
+
+    .news-title {
+      font-size: 1.35rem;
+      font-weight: 800;
+      color: var(--color-text, #111827);
+      margin-bottom: 0.4rem;
+      line-height: 1.35;
+    }
+
+    .news-subtitle {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--color-primary, #059669);
+      margin-bottom: 0.9rem;
+    }
+
+    .news-excerpt {
+      color: var(--color-text-light, #6b7280);
+      line-height: 1.75;
+      margin-bottom: 1rem;
+    }
+
+    .news-full-content {
+      color: var(--color-text-light, #6b7280);
+      line-height: 1.75;
+      margin-bottom: 1rem;
+      display: none;
+    }
+
+    .news-full-content.active {
+      display: block;
+    }
+
+    .news-excerpt.hidden {
+      display: none;
+    }
+
+    .news-full-content p {
+      margin-bottom: 0.85rem;
+    }
+
+    .read-more-btn {
+      background: none;
+      border: 2px solid var(--color-primary, #059669);
+      color: var(--color-primary, #059669);
+      font-weight: 700;
+      cursor: pointer;
+      padding: 0.45rem 1.2rem;
+      border-radius: 2rem;
+      font-size: 0.9rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: all 0.2s;
+    }
+
+    .read-more-btn:hover {
+      background: var(--color-primary, #059669);
+      color: white;
+    }
+
+    .read-more-btn .arrow {
+      transition: transform 0.25s;
+      display: inline-block;
+    }
+
+    .read-more-btn.expanded .arrow {
+      transform: rotate(90deg);
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 768px) {
+      .news-slideshow { height: 240px; }
+      .news-body { padding: 1.25rem 1.1rem 1rem; }
+      .news-title { font-size: 1.1rem; }
+    }
+
+    /* ===== DIGITAL NEWS HERO ===== */
+    .berita-hero {
+      position: relative;
+      margin-top: 70px;
+      min-height: 320px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 40%, #0d4f3c 100%);
+    }
+
+    /* Animated gradient overlay */
+    .berita-hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse at 20% 50%, rgba(6,182,212,0.18) 0%, transparent 60%),
+        radial-gradient(ellipse at 80% 20%, rgba(16,185,129,0.15) 0%, transparent 55%),
+        radial-gradient(ellipse at 60% 80%, rgba(99,102,241,0.12) 0%, transparent 50%);
+      animation: heroGlow 8s ease-in-out infinite alternate;
+    }
+
+    @keyframes heroGlow {
+      0%   { opacity: 0.7; transform: scale(1); }
+      100% { opacity: 1;   transform: scale(1.05); }
+    }
+
+    /* Floating digital icons */
+    .hero-floats {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    .hero-float {
+      position: absolute;
+      font-size: 1.6rem;
+      opacity: 0.12;
+      animation: floatUp linear infinite;
+    }
+
+    @keyframes floatUp {
+      0%   { transform: translateY(110%) rotate(0deg);   opacity: 0; }
+      10%  { opacity: 0.12; }
+      90%  { opacity: 0.12; }
+      100% { transform: translateY(-20%) rotate(20deg);  opacity: 0; }
+    }
+
+    /* Grid lines overlay */
+    .berita-hero::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(6,182,212,0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(6,182,212,0.05) 1px, transparent 1px);
+      background-size: 60px 60px;
+    }
+
+    .berita-hero-content {
+      position: relative;
+      z-index: 2;
+      text-align: center;
+      padding: 3rem 1.5rem;
+    }
+
+    .berita-hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: rgba(6,182,212,0.15);
+      border: 1px solid rgba(6,182,212,0.4);
+      color: #67e8f9;
+      padding: 0.35rem 1rem;
+      border-radius: 2rem;
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 1rem;
+      backdrop-filter: blur(4px);
+    }
+
+    .berita-hero-title {
+      font-size: clamp(1.8rem, 5vw, 3rem);
+      font-weight: 900;
+      color: #ffffff;
+      margin-bottom: 0.75rem;
+      line-height: 1.15;
+      text-shadow: 0 2px 20px rgba(0,0,0,0.4);
+    }
+
+    .berita-hero-title span {
+      background: linear-gradient(90deg, #34d399, #67e8f9);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .berita-hero-sub {
+      color: rgba(255,255,255,0.7);
+      font-size: 1rem;
+      max-width: 480px;
+      margin: 0 auto;
+      line-height: 1.6;
+    }
+
+    /* Glowing line */
+    .hero-line {
+      width: 80px;
+      height: 3px;
+      background: linear-gradient(90deg, #34d399, #67e8f9);
+      border-radius: 2px;
+      margin: 1.25rem auto 0;
+      box-shadow: 0 0 12px rgba(52,211,153,0.6);
+    }
+  </style>
+</head>
+<body>
+  <!-- Navigation -->
+  <nav class="navbar">
+    <div class="container">
+      <a href="index.html" class="navbar-brand">
+        <span class="logo-icon">🌿</span>
+        Organik Pandanrejo
+      </a>
+
+      <button class="navbar-toggle" aria-label="Toggle navigation">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+
+      <ul class="navbar-menu">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="edukasi.html">Edukasi</a></li>
+        <li><a href="produk.html">Produk</a></li>
+        <li><a href="berita.html" class="active">Berita</a></li>
+        <li><a href="cara-order.html">Cara Order</a></li>
+        <li><a href="#kontak">Kontak</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Hero Section - Digital News Style -->
+  <section class="berita-hero">
+    <!-- Floating digital icons -->
+    <div class="hero-floats" aria-hidden="true">
+      <span class="hero-float" style="left:5%;  animation-duration:14s; animation-delay:0s;   font-size:2rem;">📡</span>
+      <span class="hero-float" style="left:15%; animation-duration:18s; animation-delay:2s;   font-size:1.4rem;">🔔</span>
+      <span class="hero-float" style="left:28%; animation-duration:12s; animation-delay:5s;   font-size:1.8rem;">📲</span>
+      <span class="hero-float" style="left:42%; animation-duration:20s; animation-delay:1s;   font-size:1.2rem;">💬</span>
+      <span class="hero-float" style="left:55%; animation-duration:15s; animation-delay:7s;   font-size:2rem;">🌐</span>
+      <span class="hero-float" style="left:68%; animation-duration:17s; animation-delay:3s;   font-size:1.5rem;">📊</span>
+      <span class="hero-float" style="left:80%; animation-duration:13s; animation-delay:9s;   font-size:1.8rem;">📱</span>
+      <span class="hero-float" style="left:90%; animation-duration:19s; animation-delay:4s;   font-size:1.3rem;">✨</span>
+    </div>
+
+    <div class="berita-hero-content">
+      <div class="berita-hero-badge">📡 Live Update</div>
+      <h1 class="berita-hero-title">Berita &amp; <span>Kegiatan</span></h1>
+      <p class="berita-hero-sub">Dokumentasi perjalanan KKN Reguler Kelompok 4 di Desa Pandanrejo</p>
+      <div class="hero-line"></div>
+    </div>
+  </section>
+
+  <!-- News Section -->
+  <section class="section bg-white">
+    <div class="container">
+      <h2 class="section-title animate-on-scroll">Berita Terkini</h2>
+
+      <div class="news-list" id="newsList">
+        <!-- Articles injected by JS -->
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer" id="kontak">
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-section">
+          <h3>Organik Pandanrejo</h3>
+          <p>Program KKN Aquaponik &amp; Hidroponik dengan ikan koi untuk pertanian berkelanjutan.</p>
+          <div class="social-links">
+            <a href="#" aria-label="Facebook">📘</a>
+            <a href="#" aria-label="Instagram">📷</a>
+            <a href="#" aria-label="WhatsApp">💬</a>
+          </div>
+        </div>
+
+        <div class="footer-section">
+          <h3>Kontak</h3>
+          <p>📍 Pandansari, Pandanrejo</p>
+          <p>Kec. Wagir, Kabupaten Malang</p>
+          <p>Jawa Timur 65158</p>
+          <p>📞 082141635002</p>
+          <p>✉️ kkn.pandanrejo04@gmail.com</p>
+        </div>
+
+        <div class="footer-section">
+          <h3>Link Cepat</h3>
+          <a href="index.html">Home</a>
+          <a href="edukasi.html">Edukasi</a>
+          <a href="produk.html">Produk</a>
+          <a href="berita.html">Berita</a>
+          <a href="cara-order.html">Cara Order</a>
+          <a href="#kontak">Kontak</a>
+        </div>
+
+        <div class="footer-section">
+          <h3>Program KKN</h3>
+          <p><strong>Universitas:</strong> Universitas Merdeka Malang</p>
+          <p><strong>Kelompok:</strong> KKN UNMER Reguler Kel 4</p>
+          <p><strong>Periode:</strong> 19 Januari – 19 Februari 2026</p>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <p>&copy; 2026 Organik Pandanrejo. KKN Universitas Merdeka Malang</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- JavaScript -->
+  <script src="js/main.js"></script>
+  <script>
+  // =============================================
+  //  BERITA DATA
+  // =============================================
+  const beritaData = [
+    {
+      id: 1,
+      pekan: 'Pekan 1',
+      judul: 'Pembukaan KKN Reguler Desa Pandanrejo',
+      subjudul: 'Pembukaan Resmi KKN Reguler Kelompok 4, 5, dan 6 di Desa Pandanrejo',
+      foto: ['berita1a.jpg','berita1b.JPG','berita1c.JPG','berita1d.JPG'],
+      ringkasan: 'Kegiatan Kuliah Kerja Nyata (KKN) Reguler resmi dibuka di Desa Pandanrejo. Acara pembukaan yang berlangsung di Balai Desa Pandanrejo ini dihadiri oleh seluruh anggota kelompok 4, 5, dan 6 bersama Dosen Pembimbing Lapangan (DPL) masing-masing kelompok serta perangkat desa setempat.',
+      isi: [
+        'Kegiatan Kuliah Kerja Nyata (KKN) Reguler resmi dibuka di Desa Pandanrejo. Acara pembukaan yang berlangsung di Balai Desa Pandanrejo ini dihadiri oleh seluruh anggota kelompok 4, 5, dan 6 bersama Dosen Pembimbing Lapangan (DPL) masing-masing kelompok serta perangkat desa setempat.',
+        'Dalam kesempatan tersebut, setiap kelompok memaparkan program kerja (proker) yang telah dirancang sebagai bentuk kontribusi nyata kepada masyarakat Desa Pandanrejo selama masa KKN berlangsung. Pemaparan proker disambut dengan antusias oleh perangkat desa yang berharap kehadiran para mahasiswa dapat memberikan dampak positif bagi warga sekitar.',
+        'Acara pembukaan ditandai dengan pengesahan resmi kegiatan KKN yang dilakukan bersama-sama, sebagai simbol dimulainya pengabdian mahasiswa kepada masyarakat. Momen ini menjadi titik awal komitmen seluruh kelompok untuk menjalankan program kerja dengan penuh tanggung jawab dan semangat kolaborasi.'
+      ]
+    },
+    {
+      id: 2,
+      pekan: 'Pekan 1',
+      judul: 'Pembuatan Hidroponik dari Galon Bekas',
+      subjudul: 'Kelompok 4 KKN Pandanrejo Sulap Galon Bekas Menjadi Media Tanam Hidroponik',
+      foto: ['berita2a.JPG','berita2b.JPG','berita2c.JPG','berita2d.JPG','berita2e.JPG'],
+      ringkasan: 'Kreativitas dan kepedulian lingkungan menjadi landasan Kelompok 4 KKN Desa Pandanrejo dalam menjalankan salah satu program kerja unggulannya, yakni pembuatan sistem hidroponik berbahan dasar galon bekas.',
+      isi: [
+        'Kreativitas dan kepedulian lingkungan menjadi landasan Kelompok 4 KKN Desa Pandanrejo dalam menjalankan salah satu program kerja unggulannya, yakni pembuatan sistem hidroponik berbahan dasar galon bekas. Kegiatan ini dilaksanakan di posko dan Balai Desa Pandanrejo sebagai bagian dari upaya pemanfaatan barang daur ulang menjadi sesuatu yang bernilai guna.',
+        'Proses pembuatan dimulai dari pemotongan galon bekas yang disesuaikan dengan desain media tanam yang telah direncanakan. Galon-galon tersebut kemudian dicat untuk memberikan tampilan yang lebih menarik dan tidak mudah ditumbuhi lumut akibat paparan sinar matahari. Setiap galon diberi identitas kelompok menggunakan pilox sebagai bentuk kebanggaan atas karya yang dihasilkan bersama.',
+        'Tahap selanjutnya adalah pelubangan keranjang yang berfungsi sebagai tempat netpot — wadah kecil yang akan menopang bibit tanaman dalam sistem hidroponik dan akuaponik. Lubang-lubang tersebut dirancang dengan presisi agar netpot dapat terpasang dengan baik dan mendukung pertumbuhan tanaman secara optimal.',
+        'Kegiatan ini merupakan langkah awal dalam mewujudkan sistem pertanian modern berbasis hidroponik dan akuaponik yang menjadi program kerja utama Kelompok 4 di Desa Pandanrejo.'
+      ]
+    },
+    {
+      id: 3,
+      pekan: 'Akhir Pekan 1 – Pekan 2',
+      judul: 'Pembangunan Instalasi Akuaponik Bertingkat',
+      subjudul: 'Kelompok 4 KKN Pandanrejo Bangun Sistem Akuaponik Bertingkat Terintegrasi di Balai Desa',
+      foto: ['berita3a.JPG','berita3b.JPG','berita3c.JPG','berita3d.JPG','berita3e.JPG','berita3f.JPG'],
+      ringkasan: 'Kelompok 4 KKN Desa Pandanrejo berhasil merancang dan membangun instalasi akuaponik bertingkat sebagai program kerja unggulan yang menggabungkan budidaya ikan dan tanaman secara sinergis.',
+      isi: [
+        'Kelompok 4 KKN Desa Pandanrejo berhasil merancang dan membangun instalasi akuaponik bertingkat sebagai program kerja unggulan yang menggabungkan budidaya ikan dan tanaman secara sinergis. Instalasi ini dibangun menggunakan pipa berdiameter 2,5 inci sepanjang 2,8 meter dengan rangka penyangga dari pipa berdiameter ¾ inci, membentuk sistem bertingkat empat yang saling terhubung dengan tinggi keseluruhan sekitar 90 cm.',
+        'Sistem ini ditenagai oleh pompa air berkapasitas 40 watt yang mengalirkan air dari kolam ikan di Balai Desa Pandanrejo ke seluruh jalur pipa secara sirkulasi. Air kolam yang kaya nutrisi dari kotoran ikan mengalir melewati setiap tingkat instalasi, menyuburkan tanaman yang tertanam di netpot secara alami — menjadikan ikan dan tanaman saling menguntungkan dalam satu ekosistem.',
+        'Salah satu inovasi yang turut dihadirkan adalah pembuatan wadah penampung kotoran ikan yang dilengkapi dengan sistem peredam arus berlapis dan lubang pipa sebagai saluran air. Sistem ini dirancang agar air tetap dapat mengalir dengan lancar, sementara partikel kotoran ikan mengendap di dalam penampung. Ketika penampung telah penuh, penampung dapat dilepas dengan mudah dan kran pembuangan di bagian bawah dapat dibuka untuk proses pembersihan.',
+        'Endapan kotoran ikan yang terkumpul pun tidak terbuang sia-sia, melainkan diolah menjadi Pupuk Organik Cair (POC). Cara pembuatannya: campurkan 1 liter air kolam yang mengandung kotoran ikan dengan 1 sendok makan EM4 dan 1 sendok makan gula merah cair. Campuran tersebut dimasukkan ke dalam botol yang ditutup rapat dan difermentasi selama 5 hari. Setiap harinya, tutup botol dibuka selama ±10 detik untuk membuang gas hasil fermentasi, lalu ditutup kembali. Setelah 5 hari, POC siap digunakan — tidak berbau menyengat dan sangat baik untuk menyuburkan tanaman.',
+        'Selama proses pembangunan instalasi berlangsung, tim juga melakukan penyemaian bibit tanaman secara paralel, sehingga saat instalasi selesai dan siap beroperasi, bibit yang telah cukup umur langsung dapat dipindahkan ke dalam netpot akuaponik. Langkah ini mencerminkan perencanaan yang matang dan kerja tim yang solid dari Kelompok 4 KKN Desa Pandanrejo.'
+      ]
+    },
+    {
+      id: 4,
+      pekan: 'Pekan 2',
+      judul: 'Revitalisasi Balai Desa dan Persiapan Kolam Ikan',
+      subjudul: 'Kelompok 4 KKN Pandanrejo Bergerak Bersama Revitalisasi Balai Desa dan Siapkan Kolam Ikan',
+      foto: ['berita4a.JPG','berita4b.JPG','berita4c.JPG','berita4d.JPG'],
+      ringkasan: 'Semangat gotong royong kembali ditunjukkan oleh Kelompok 4 KKN Desa Pandanrejo melalui kegiatan kerja bakti revitalisasi area Balai Desa Pandanrejo.',
+      isi: [
+        'Semangat gotong royong kembali ditunjukkan oleh Kelompok 4 KKN Desa Pandanrejo melalui kegiatan kerja bakti revitalisasi area Balai Desa Pandanrejo. Berbagai aktivitas dilakukan secara bersama-sama, mulai dari penataan tanaman, pembersihan lingkungan sekitar balai desa, hingga pengecatan pot tanaman yang sebelumnya telah dibuat dari galon bekas daur ulang. Hasilnya, tampilan balai desa menjadi lebih bersih, asri, dan nyaman bagi warga yang berkunjung.',
+        'Selain kegiatan kebersihan, Kelompok 4 juga merealisasikan satu inovasi penting dalam ekosistem akuaponik yang sedang dibangun, yaitu pembuatan sekat pemisah pada kolam ikan di balai desa. Sekat ini dirancang khusus untuk memisahkan area bibit ikan yang baru ditebarkan dari ikan-ikan dewasa yang ada di kolam, guna mencegah bibit ikan yang masih kecil dimangsa oleh ikan yang lebih besar. Dengan adanya sekat ini, proses budidaya ikan dapat berjalan lebih optimal dan keberlangsungan ekosistem akuaponik pun semakin terjaga.',
+        'Kegiatan pada pekan kedua ini menjadi bukti bahwa program kerja Kelompok 4 tidak hanya berfokus pada pembangunan fisik instalasi, tetapi juga memerhatikan keberlanjutan dan kerapian lingkungan sekitar sebagai bagian dari pengabdian kepada masyarakat Desa Pandanrejo.'
+      ]
+    },
+    {
+      id: 5,
+      pekan: 'Pekan 3',
+      judul: 'Sosialisasi Hidroponik dan Akuaponik di SDN Pandanrejo 1',
+      subjudul: 'Tanamkan Cinta Pertanian Sejak Dini, Kelompok 4 KKN Pandanrejo Edukasi Siswa SD tentang Hidroponik dan Akuaponik',
+      foto: ['berita5a.JPG','berita5b.JPG','berita5c.JPG','berita5d.JPG','berita5e.JPG'],
+      ringkasan: 'Memperluas manfaat program kerja hingga ke generasi muda, Kelompok 4 KKN Desa Pandanrejo menggelar kegiatan sosialisasi hidroponik dan akuaponik kepada siswa kelas 4 SDN Pandanrejo 1.',
+      isi: [
+        'Memperluas manfaat program kerja hingga ke generasi muda, Kelompok 4 KKN Desa Pandanrejo menggelar kegiatan sosialisasi hidroponik dan akuaponik kepada siswa kelas 4 SDN Pandanrejo 1. Kegiatan edukatif yang berlangsung selama beberapa hari ini dirancang dengan pendekatan yang menyenangkan dan interaktif agar materi dapat tersampaikan dengan baik kepada peserta didik.',
+        'Untuk membuat suasana belajar lebih hidup, sesi sosialisasi dibuka dengan pemutaran kartun edukatif bertema hidroponik dan akuaponik yang langsung menarik perhatian para siswa. Antusiasme adik-adik semakin terlihat ketika mereka diajak secara langsung untuk mempraktikkan cara menyemai benih menggunakan media sederhana berupa gelas, kapas, air, dan benih tanaman.',
+        'Tidak berhenti di situ, kegiatan dilanjutkan dengan sesi kuis berkelompok menggunakan lembar pertanyaan yang telah disiapkan oleh tim KKN sebagai sarana mengulas kembali materi yang telah disampaikan. Kelompok dengan nilai tertinggi mendapatkan hadiah menarik sebagai bentuk apresiasi atas semangat belajar mereka, sehingga setiap sesi berlangsung penuh keceriaan dan kompetisi yang sehat.',
+        'Sebagai penutup rangkaian kegiatan sosialisasi, Kelompok 4 menyerahkan cindera mata kepada SDN Pandanrejo 1 yang diterima langsung oleh Kepala Sekolah. Momen penyerahan kenang-kenangan tersebut juga dimanfaatkan untuk melakukan sesi wawancara bersama Kepala Sekolah terkait kegiatan yang telah berlangsung. Kegiatan sosialisasi ini diharapkan mampu menumbuhkan minat dan kesadaran generasi muda Desa Pandanrejo terhadap pentingnya ketahanan pangan berbasis pertanian mandiri sejak usia dini.'
+      ]
+    },
+    {
+      id: 6,
+      pekan: 'Pekan 3',
+      judul: 'Sosialisasi Hidroponik dan Akuaponik bersama Ibu-Ibu Warga Desa',
+      subjudul: 'Dorong Kemandirian Pangan Keluarga, Kelompok 4 KKN Pandanrejo Ajak Ibu-Ibu Warga Desa Praktik Hidroponik',
+      foto: ['berita6a.jpg','berita6b.jpg','berita6c.jpg','berita6d.jpg'],
+      ringkasan: 'Kelompok 4 KKN Desa Pandanrejo menggelar kegiatan sosialisasi dan praktik langsung hidroponik bersama ibu-ibu warga sekitar yang bertempat di Balai Desa Pandanrejo.',
+      isi: [
+        'Kelompok 4 KKN Desa Pandanrejo menggelar kegiatan sosialisasi dan praktik langsung hidroponik bersama ibu-ibu warga sekitar yang bertempat di Balai Desa Pandanrejo. Kegiatan ini merupakan salah satu program kerja utama yang dirancang untuk mendorong kemandirian pangan keluarga di tingkat rumah tangga.',
+        'Mengangkat semangat "memanfaatkan lahan sempit, hasil melimpah", tim KKN memperkenalkan teknik bercocok tanam hidroponik sederhana yang dapat dipraktikkan menggunakan alat-alat yang mudah ditemukan di sekitar rumah. Hal ini menjadi solusi yang sangat relevan mengingat sebagian besar warga Desa Pandanrejo tidak memiliki lahan pertanian yang luas, sementara ketersediaan penjual sayur di wilayah desa masih sangat terbatas.',
+        'Para ibu-ibu diajak secara langsung untuk mempraktikkan pembuatan instalasi hidroponik sederhana, mulai dari pemilihan wadah, penyusunan media tanam, hingga cara perawatan tanaman agar tumbuh optimal. Suasana kegiatan berlangsung hangat dan interaktif, dengan banyak pertanyaan yang diajukan oleh para peserta yang antusias ingin mencoba sendiri di rumah masing-masing.',
+        'Melalui kegiatan ini, Kelompok 4 berharap warga Desa Pandanrejo, khususnya para ibu rumah tangga, dapat memanfaatkan ruang dan lahan yang ada di sekitar rumah untuk ditanami sayuran secara mandiri. Dengan demikian, kebutuhan sayur keluarga dapat terpenuhi secara swadaya, sekaligus mengurangi pengeluaran rumah tangga sehari-hari — sebuah langkah kecil namun berarti menuju ketahanan pangan keluarga yang lebih baik.'
+      ]
+    },
+    {
+      id: 7,
+      pekan: 'Akhir Pekan 3',
+      judul: 'Kerja Bakti Bersama Warga Persiapan Pengajian',
+      subjudul: 'Wujudkan Gotong Royong, Kelompok 4 KKN Pandanrejo Ikut Serta Bersih Desa Persiapan Pengajian',
+      foto: ['berita7a.JPG','berita7b.JPG','berita7c.JPG','berita7d.JPG'],
+      ringkasan: 'Jiwa gotong royong kembali ditunjukkan oleh Kelompok 4 KKN Desa Pandanrejo dengan turut berpartisipasi aktif dalam kegiatan bersih desa atau kerja bakti bersama warga sekitar.',
+      isi: [
+        'Jiwa gotong royong kembali ditunjukkan oleh Kelompok 4 KKN Desa Pandanrejo dengan turut berpartisipasi aktif dalam kegiatan bersih desa atau kerja bakti bersama warga sekitar. Kegiatan ini berfokus pada pembersihan dan penataan area lingkungan masjid yang akan menjadi lokasi penyelenggaraan acara pengajian dalam waktu dekat.',
+        'Bahu-membahu bersama bapak-bapak warga desa, mahasiswa KKN Kelompok 4 terlibat langsung dalam berbagai aktivitas, mulai dari pembersihan halaman dan lingkungan sekitar masjid, penataan area agar tampak rapi dan representatif, hingga berbagai persiapan lain yang dibutuhkan demi kelancaran acara pengajian yang akan digelar.',
+        'Keterlibatan mahasiswa KKN dalam kegiatan ini bukan sekadar membantu secara fisik, tetapi juga menjadi wujud nyata dari kedekatan dan kebersamaan antara mahasiswa dengan warga Desa Pandanrejo. Kegiatan kerja bakti ini sekaligus mencerminkan nilai-nilai pengabdian kepada masyarakat yang menjadi ruh dari pelaksanaan KKN itu sendiri — bahwa mahasiswa hadir bukan hanya untuk program kerja formal, tetapi juga untuk berbaur dan berkontribusi dalam setiap denyut kehidupan masyarakat desa.'
+      ]
+    },
+    {
+      id: 8,
+      pekan: 'Pekan 4',
+      judul: 'Pendampingan Adik-Adik TPQ Persiapan Haflah Menyambut Ramadan',
+      subjudul: 'Sambut Ramadan dengan Semangat, Kelompok 4 KKN Pandanrejo Dampingi Adik-Adik TPQ Persiapan Haflah',
+      foto: ['berita8a.JPG','berita8b.JPG','berita8c.JPG','berita8d.JPG'],
+      ringkasan: 'Menyambut datangnya bulan suci Ramadan, Kelompok 4 KKN Desa Pandanrejo turut ambil bagian dalam mempersiapkan penampilan adik-adik santri TPQ untuk acara Haflah yang akan segera digelar.',
+      isi: [
+        'Menyambut datangnya bulan suci Ramadan, Kelompok 4 KKN Desa Pandanrejo turut ambil bagian dalam mempersiapkan penampilan adik-adik santri TPQ untuk acara Haflah yang akan segera digelar. Kegiatan pendampingan ini berlangsung setiap sore hari secara rutin hingga malam gladi bersih, sebagai bentuk dukungan penuh mahasiswa KKN terhadap kegiatan keagamaan masyarakat Desa Pandanrejo.',
+        'Tim Kelompok 4 membagi tugas secara merata, di mana setiap anggota bertanggung jawab mendampingi kelas yang berbeda dengan jenis penampilan seni yang beragam. Pembagian tugas ini memastikan seluruh santri mendapatkan perhatian dan bimbingan yang optimal dalam mempersiapkan penampilan terbaik mereka di atas panggung.',
+        'Proses latihan yang berlangsung dengan penuh keceriaan ini menjadi momen yang berkesan, baik bagi adik-adik santri TPQ maupun bagi mahasiswa KKN itu sendiri. Kehadiran kakak-kakak mahasiswa memberikan semangat tersendiri bagi para santri untuk tampil percaya diri dan maksimal. Melalui kegiatan ini, Kelompok 4 tidak hanya berkontribusi dalam persiapan teknis penampilan, tetapi juga mempererat tali silaturahmi antara mahasiswa dan masyarakat Desa Pandanrejo dalam nuansa kebersamaan menyambut Ramadan.'
+      ]
+    },
+    {
+      id: 9,
+      pekan: 'Pekan 4',
+      judul: 'Membantu Persiapan dan Mengikuti Rangkaian Acara Haflah',
+      subjudul: 'Haflah TPQ Pandanrejo Berjalan Meriah, Kelompok 4 KKN Ikut Sukseskan Acara hingga Selesai',
+      foto: ['berita9a.jpg','berita9b.jpg','berita9c.jpg','berita9d.jpg'],
+      ringkasan: 'Puncak dari rangkaian persiapan panjang akhirnya tiba. Kelompok 4 KKN Desa Pandanrejo turut serta secara aktif dalam membantu persiapan teknis dan mengikuti seluruh rangkaian acara Haflah TPQ Pandanrejo dari awal hingga selesai.',
+      isi: [
+        'Puncak dari rangkaian persiapan panjang akhirnya tiba. Kelompok 4 KKN Desa Pandanrejo turut serta secara aktif dalam membantu persiapan teknis dan mengikuti seluruh rangkaian acara Haflah TPQ Pandanrejo dari awal hingga selesai. Acara yang berlangsung di area panggung yang telah disiapkan di dekat TPQ ini menjadi momen yang sangat dinantikan oleh seluruh santri, orang tua, dan warga sekitar.',
+        'Jauh sebelum acara dimulai, mahasiswa KKN Kelompok 4 telah bergerak membantu berbagai persiapan teknis demi memastikan kelancaran jalannya acara. Ketika acara berlangsung, penampilan demi penampilan dari adik-adik santri TPQ yang sebelumnya telah dibimbing oleh tim KKN pun akhirnya terwujud di atas panggung dengan membanggakan.',
+        'Keikutsertaan Kelompok 4 dalam acara Haflah ini menegaskan komitmen mereka untuk tidak hanya hadir sebagai pelaksana program kerja, tetapi juga sebagai bagian dari kehidupan sosial dan keagamaan masyarakat Desa Pandanrejo secara menyeluruh.'
+      ]
+    },
+    {
+      id: 10,
+      pekan: 'Pekan 4',
+      judul: 'Penutupan KKN Reguler Desa Pandanrejo',
+      subjudul: 'Resmi Ditutup, KKN Reguler Kelompok 4, 5, dan 6 Tinggalkan Jejak Nyata di Desa Pandanrejo',
+      foto: ['berita10a.JPG','berita10b.JPG','berita10c.JPG','berita10d.JPG'],
+      ringkasan: 'Rangkaian kegiatan Kuliah Kerja Nyata (KKN) Reguler di Desa Pandanrejo resmi ditutup dalam sebuah acara penutupan yang berlangsung khidmat dan penuh kesan di Balai Desa Pandanrejo.',
+      isi: [
+        'Rangkaian kegiatan Kuliah Kerja Nyata (KKN) Reguler di Desa Pandanrejo resmi ditutup dalam sebuah acara penutupan yang berlangsung khidmat dan penuh kesan di Balai Desa Pandanrejo. Acara penutupan yang melibatkan Kelompok 4, 5, dan 6 ini dihadiri oleh Dosen Pembimbing Lapangan (DPL) masing-masing kelompok, perangkat desa, serta sejumlah warga Desa Pandanrejo yang turut menyaksikan momen bersejarah ini.',
+        'Acara diawali dengan penayangan video program kerja dari masing-masing kelompok, merangkum seluruh perjalanan dan capaian yang telah diraih selama masa KKN berlangsung. Video tersebut menjadi refleksi visual atas kerja keras, dedikasi, dan kontribusi nyata yang telah diberikan para mahasiswa kepada masyarakat Desa Pandanrejo.',
+        'Kepala Desa Pandanrejo menyampaikan sambutan yang hangat dan apresiasi yang tulus kepada seluruh mahasiswa KKN atas kontribusi dan pengabdian yang telah diberikan selama berada di desa. Acara kemudian dilanjutkan dengan tradisi tumpengan sebagai simbol syukur atas terlaksananya seluruh rangkaian kegiatan KKN dengan baik dan lancar.',
+        'Sebagai penanda resmi berakhirnya masa pengabdian, dilakukan penandatanganan dan penyerahan Berita Acara Serah Terima (BAST) dari mahasiswa KKN kepada Kepala Desa Pandanrejo. Momen ini menjadi simbolisasi bahwa seluruh program kerja yang telah dijalankan kini resmi diserahterimakan kepada masyarakat untuk dapat dilanjutkan dan dikembangkan secara mandiri.',
+        'Dengan ditutupnya KKN Reguler ini, Kelompok 4 berharap seluruh program yang telah dijalankan — khususnya sistem akuaponik, edukasi hidroponik, serta berbagai kegiatan sosial kemasyarakatan — dapat terus memberikan manfaat yang berkelanjutan bagi Desa Pandanrejo jauh setelah masa KKN usai.'
+      ]
+    }
+  ];
+
+  // =============================================
+  //  BUILD ARTICLES
+  // =============================================
+  function buildArticles() {
+    const container = document.getElementById('newsList');
+
+    beritaData.forEach(function(b) {
+      const article = document.createElement('article');
+      article.className = 'news-article animate-on-scroll';
+      article.id = 'berita-' + b.id;
+
+      // --- Slideshow ---
+      const slideshowId = 'ss-' + b.id;
+      const dotsId = 'dots-' + b.id;
+
+      let slidesHTML = '';
+      b.foto.forEach(function(fname, i) {
+        const src = 'images/Berita/' + fname;
+        slidesHTML += `
+          <div class="slide${i === 0 ? ' active' : ''}" data-index="${i}">
+            <img src="${src}" alt="${b.judul} foto ${i+1}" loading="lazy"
+                 onerror="this.closest('.slide').style.display='none'; skipHiddenSlide('${slideshowId}');">
+          </div>`;
+      });
+
+      let dotsHTML = '';
+      b.foto.forEach(function(_, i) {
+        dotsHTML += `<button class="dot${i === 0 ? ' active' : ''}" data-index="${i}"
+          onclick="goToSlide('${slideshowId}', ${i})" aria-label="Foto ${i+1}"></button>`;
+      });
+
+      // --- Full content paragraphs ---
+      const fullParas = b.isi.map(p => `<p>${p}</p>`).join('');
+
+      article.innerHTML = `
+        <div class="news-slideshow" id="${slideshowId}">
+          ${slidesHTML}
+          <div class="slideshow-dots" id="${dotsId}">${dotsHTML}</div>
+          <button class="slide-arrow prev" onclick="changeSlide('${slideshowId}', -1)" aria-label="Sebelumnya">&#8249;</button>
+          <button class="slide-arrow next" onclick="changeSlide('${slideshowId}', 1)" aria-label="Berikutnya">&#8250;</button>
+        </div>
+        <div class="news-body">
+          <div class="news-meta">
+            <span class="news-number">📰 Berita ${b.id}</span>
+            <span class="news-pekan">📅 ${b.pekan}</span>
+          </div>
+          <h2 class="news-title">${b.judul}</h2>
+          <p class="news-subtitle">${b.subjudul}</p>
+          <p class="news-excerpt">${b.ringkasan}</p>
+          <div class="news-full-content">${fullParas}</div>
+          <button class="read-more-btn" onclick="toggleReadMore(this)">
+            Baca Selengkapnya <span class="arrow">→</span>
+          </button>
+        </div>`;
+
+      container.appendChild(article);
+
+      // Start auto-play
+      startAutoPlay(slideshowId);
+    });
+  }
+
+  // =============================================
+  //  SLIDESHOW LOGIC
+  // =============================================
+  const autoPlayTimers = {};
+
+  function getVisibleSlides(ssId) {
+    const ss = document.getElementById(ssId);
+    return Array.from(ss.querySelectorAll('.slide')).filter(s => s.style.display !== 'none');
+  }
+
+  function getCurrentIndex(ssId) {
+    const slides = getVisibleSlides(ssId);
+    for (let i = 0; i < slides.length; i++) {
+      if (slides[i].classList.contains('active')) return i;
+    }
+    return 0;
+  }
+
+  function goToSlide(ssId, targetIndex) {
+    const ss = document.getElementById(ssId);
+    const slides = getVisibleSlides(ssId);
+    if (slides.length === 0) return;
+
+    // Clamp
+    targetIndex = ((targetIndex % slides.length) + slides.length) % slides.length;
+
+    slides.forEach(function(s, i) {
+      s.classList.toggle('active', i === targetIndex);
+    });
+
+    // Update dots
+    const allDots = ss.parentElement.querySelectorAll ? null : null;
+    const dotsContainer = ss.querySelector('.slideshow-dots');
+    if (dotsContainer) {
+      const dots = dotsContainer.querySelectorAll('.dot');
+      dots.forEach(function(d, i) {
+        d.classList.toggle('active', i === targetIndex);
+      });
+    }
+  }
+
+  function changeSlide(ssId, dir) {
+    const current = getCurrentIndex(ssId);
+    goToSlide(ssId, current + dir);
+    resetAutoPlay(ssId);
+  }
+
+  function startAutoPlay(ssId) {
+    autoPlayTimers[ssId] = setInterval(function() {
+      const slides = getVisibleSlides(ssId);
+      if (slides.length > 1) {
+        const next = (getCurrentIndex(ssId) + 1) % slides.length;
+        goToSlide(ssId, next);
+      }
+    }, 4000);
+  }
+
+  function resetAutoPlay(ssId) {
+    clearInterval(autoPlayTimers[ssId]);
+    startAutoPlay(ssId);
+  }
+
+  function skipHiddenSlide(ssId) {
+    // If current active slide is hidden, move to next visible
+    const ss = document.getElementById(ssId);
+    const allSlides = Array.from(ss.querySelectorAll('.slide'));
+    const activeHidden = allSlides.find(s => s.classList.contains('active') && s.style.display === 'none');
+    if (activeHidden) {
+      activeHidden.classList.remove('active');
+      const visible = allSlides.filter(s => s.style.display !== 'none');
+      if (visible.length > 0) visible[0].classList.add('active');
+    }
+  }
+
+  // =============================================
+  //  READ MORE TOGGLE
+  // =============================================
+  function toggleReadMore(button) {
+    const body = button.closest('.news-body');
+    const excerpt = body.querySelector('.news-excerpt');
+    const full = body.querySelector('.news-full-content');
+
+    if (full.classList.contains('active')) {
+      full.classList.remove('active');
+      excerpt.classList.remove('hidden');
+      button.innerHTML = 'Baca Selengkapnya <span class="arrow">→</span>';
+      button.classList.remove('expanded');
+    } else {
+      full.classList.add('active');
+      excerpt.classList.add('hidden');
+      button.innerHTML = 'Sembunyikan <span class="arrow">→</span>';
+      button.classList.add('expanded');
+    }
+  }
+
+  // =============================================
+  //  INIT
+  // =============================================
+  document.addEventListener('DOMContentLoaded', buildArticles);
+  </script>
+</body>
+</html>
