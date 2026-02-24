@@ -4,7 +4,7 @@ import shutil
 import tempfile
 from PIL import Image
 
-folder = r'd:\organikpandarejo\images\Berita'
+folder = r'd:\Pandanrejo\images\Berita'
 max_width = 1920
 quality = 90
 tmpdir = tempfile.mkdtemp()
