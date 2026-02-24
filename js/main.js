@@ -1,5 +1,5 @@
 // ===================================
-// Organik Pandan Rejo - Main JavaScript
+// Organik Pandanrejo - Main JavaScript
 // ===================================
 
 // Mobile Navigation Toggle
@@ -97,7 +97,7 @@ function orderWhatsApp(productName = '', productPrice = '') {
   // Default WhatsApp number (can be updated)
   const whatsappNumber = '6281234567890'; // Update with actual number
   
-  let message = 'Halo kak, saya ingin order produk Organik Pandan Rejo.';
+  let message = 'Halo kak, saya ingin order produk Organik Pandanrejo.';
   
   if (productName && productPrice) {
     message = `Halo kak, saya ingin order:\n\nProduk: ${productName}\nHarga: ${productPrice}\n\nTerima kasih!`;
@@ -244,4 +244,4 @@ const createBackToTop = () => {
 // Initialize back to top button
 createBackToTop();
 
-console.log('🌿 Organik Pandan Rejo - Website Loaded Successfully!');
+console.log('🌿 Organik Pandanrejo - Website Loaded Successfully!');
